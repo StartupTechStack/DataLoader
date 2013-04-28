@@ -13,18 +13,39 @@ namespace StartupTechStack
     public class FundingEvent
     {
 
-
+        [BsonElement("type")]
         public string round_code { get; set; }
+         [BsonElement("currency_code")]
         public string raised_currency_code { get; set; }
-        public float raised_amount { get; set; }
+         [BsonElement("amount")]
+        public decimal raised_amount { get; set; }
+         [BsonElement("year")]
         public int funded_year { get; set; }
+         [BsonElement("month")]
         public int funded_month { get; set; }
+         [BsonElement("day")]
         public int funded_day { get; set; }
+
+        [BsonElement("date")]
+        [BsonDateTimeOptions(DateOnly = true)]
+        public DateTime Date
+        {
+            get
+            {
+                return  new DateTime(funded_year, funded_month, funded_day);
+            }
+
+        }
     }
 
     public class Company
     {
-        public string Id { get; set; }
+
+        public string Id
+        {
+            get { return Permalink; }
+            set { }
+        }
 
         [BsonElement("name")]
         public string Name { get; set; }
@@ -37,7 +58,7 @@ namespace StartupTechStack
 
 
         [BsonElement("category")]
-        private string category_code { get; set; }
+        public string category_code { get; set; }
 
         [BsonElement("techStack")]
         public List<string> TechStack { get; set; }

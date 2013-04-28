@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +30,7 @@ namespace StartupTechStackTest
         public async void FillCompanyDetailsTest()
         {
             CrunchbaseGateway crunchbaseGateway = (new CrunchbaseGateway());
-            var data = await crunchbaseGateway.FillCompanyDetails(new Company() { Permalink = "meetup"}) ;
+            var data = await crunchbaseGateway.FillCompanyDetails(new Company() { Permalink = "general-assembly" });
 
             data.PrintDump();
         }
@@ -45,6 +47,47 @@ namespace StartupTechStackTest
              {
                await crunchbaseGateway.FillCompanyDetails(company);
             });
+        }
+
+        [Test]
+        public async void SearchCompanyTest()
+        {
+            CrunchbaseGateway crunchbaseGateway = (new CrunchbaseGateway());
+            var data = await crunchbaseGateway.SearchCompany( "meetup"  );
+
+            data.PrintDump();
+        }
+
+        [Test]
+        public async void FindPermalinksTest()
+        {
+            CrunchbaseGateway crunchbaseGateway = (new CrunchbaseGateway());
+           
+            var readAllLines = File.ReadLines("nytech.txt");
+
+            Parallel.ForEach(readAllLines, async line =>
+            {
+                var data = await crunchbaseGateway.SearchCompany(line.Trim());
+
+                "{0}: {1}".Fmt(line.Trim(), data.Join(", ")).PrintDump();
+            });
+
+        }
+
+        [Test]
+        public async void DownloadNYCompaniesTest()
+        {
+            CrunchbaseGateway crunchbaseGateway = (new CrunchbaseGateway());
+
+            var readAllLines = File.ReadLines("nytech2.txt");
+
+            Parallel.ForEach(readAllLines, async line =>
+            {
+                var data = await crunchbaseGateway.FillCompanyDetails(new Company() {Permalink = line}) ;
+
+                data.PrintDump();
+            });
+
         }
 
     }
